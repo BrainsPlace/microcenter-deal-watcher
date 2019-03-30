@@ -34,7 +34,7 @@ def getOpenBox():
                     discountPercent = 1 - now/original
                     discountAmount = original - now
                     if(discountPercent > .21):
-                        item = Item('https://microcenter.com'+i.a['href'], now,  str(discountPercent*100)[:4], discountAmount)
+                        item = Item('https://www.microcenter.com'+i.a['href'], now,  str(discountPercent*100)[:4], discountAmount)
                         discounts.append(item)
                 
         except:
