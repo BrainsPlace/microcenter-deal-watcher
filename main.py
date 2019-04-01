@@ -1,7 +1,7 @@
 import urllib.request, json 
 import requests
 from bs4 import BeautifulSoup
-
+import csv
 openBox = 'https://www.microcenter.com/search/search_results.aspx?N=4294966998&prt=clearance&feature=840538&page='
 
 discounts = []
@@ -13,6 +13,15 @@ class Item:
         self.discountPercent = discountPercent
         self.discountAmount = discountAmount
 
+
+def readFile():
+    # f = open('data.csv', 'r')
+    # for line in f:
+    #     print(line)
+    with open('data.csv', 'r') as f:
+        reader = csv.reader(f)
+        for row in reader:
+            discounts.append(Item(row[0], row[1], row[2], row[3], row[4]))
 
 def getOpenBox():
     pageNumber = 0
@@ -54,9 +63,10 @@ def getOpenBox():
 #################################################
 #################################################
 
+readFile()
 
-getOpenBox()
-output = ''
+# getOpenBox()
+# output = ''
 
 
 for d in sorted(discounts, key=lambda item: item.discountAmount, reverse=True):
@@ -66,11 +76,11 @@ for d in sorted(discounts, key=lambda item: item.discountAmount, reverse=True):
     print('Discount $ ' + str(d.discountAmount)[:4] + ' off')
     print('Percent    ' + d.discountPercent + '% off\n')
     
-    output += str(d.id) + ',' + str(d.price) + ',' + str(d.discountAmount) + ',' + d.discountPercent + ',' +  d.link + '\n'
+#     output += str(d.id) + ',' + str(d.price) + ',' + str(d.discountAmount) + ',' + d.discountPercent + ',' +  d.link + '\n'
 
-f = open('data.csv', 'w+')
-f.write(output)
-f.close
+# f = open('data.csv', 'w+')
+# f.write(output)
+# f.close
     
    
 
