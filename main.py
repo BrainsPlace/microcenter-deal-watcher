@@ -2,7 +2,6 @@ import urllib.request, json
 import requests
 from bs4 import BeautifulSoup
 import csv
-#openBox = 'https://www.microcenter.com/search/search_results.aspx?N=4294966998&prt=clearance&feature=840538&page='
 urls = []
 discounts = []
 
@@ -29,6 +28,12 @@ def readUrlFile():
     with open('urls.txt', 'r') as f:
         return f.readlines()
 
+#single line file ex: https://maker.ifttt.com/trigger/{TRIGGER NAME}/with/key/{KEY}
+def readIFTTT():
+    with open('ifttt.txt', 'r') as f:
+        return f.readline()
+
+
 def contains(item):
     for d in discounts:
         if str(d.id) == str(item):
@@ -38,13 +43,7 @@ def contains(item):
 def getDiscounts(url):
     print(url)
     page = requests.get(url)
-    #page = requests.get(openBox + str(pageNumber))
     soup = BeautifulSoup(page.text, 'html.parser')
-    
-    # LOG SOURCE PAGE IF NEEDED
-    # f = open('index.html', 'w+')
-    # f.write(soup.prettify())
-    # f.close
     
     for i in soup.find_all('div', {'class': 'price_wrapper'}):
         try:
@@ -75,6 +74,8 @@ def getDiscounts(url):
 ##################### MAIN ######################
 #################################################
 
+ifttt = readIFTTT()
+print(ifttt)
 readDataFile()
 urls = readUrlFile()
 
@@ -85,12 +86,6 @@ data = ''   #for .csv
 output = '' #for email
 
 for d in sorted(discounts, key=lambda item: item.discountAmount, reverse=True):
-    # print(d.id)
-    # print(d.link)
-    # print('Price    $ ' + str(d.price))
-    # print('Discount $ ' + str(d.discountAmount)[:4] + ' off')
-    # print('Percent    ' + str(d.discountPercent) + '% off\n')
-    
     data += str(d.id) + ',' + str(d.price) + ',' + str(d.discountAmount) + ',' + str(d.discountPercent) + ',' +  d.link + ',' + str(d.newlyFound) + '\n'
     if d.newlyFound == 1:
         output += d.link + '<br>Price: $' + str(d.price) + '<br>Discount Amount: $' + str(d.discountAmount)[:4] + '<br>Discount Percent: ' + str(d.discountPercent)[:5] + '<br><br>'  
@@ -104,7 +99,7 @@ f.close
 if len(output) > 10:
     report = {}
     report["value1"] = output
-    requests.post('https://maker.ifttt.com/trigger/discount_found/with/key/fjwO5YbabWCSy5SN4xXnZeWMzSckF0wP2B9wQCQYOsj', data=report)
+    requests.post(ifttt, data=report)
 else:
     print('no new items found')
     
