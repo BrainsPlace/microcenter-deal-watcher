@@ -1,4 +1,5 @@
-import urllib.request, json 
+import urllib
+import json 
 import requests
 from bs4 import BeautifulSoup
 import csv
@@ -41,10 +42,11 @@ def contains(item):
     return False
 
 def getDiscounts(url):
-    print(url)
-    page = requests.get(url)
+    print('getting ' + url)
+    cookie = dict(storeSelected='141') #get this from your browser console > storage > cookies
+    page = requests.get(url,cookies=cookie)
     soup = BeautifulSoup(page.text, 'html.parser')
-    
+
     for i in soup.find_all('div', {'class': 'price_wrapper'}):
         try:
             if i.div.span is not None and i.div.strong is not None:
@@ -90,8 +92,6 @@ for d in sorted(discounts, key=lambda item: item.discountAmount, reverse=True):
     if d.newlyFound == 1:
         output += d.link + '<br>Price: $' + str(d.price) + '<br>Discount Amount: $' + str(d.discountAmount)[:4] + '<br>Discount Percent: ' + str(d.discountPercent)[:5] + '<br><br>'  
 
-print(output)
-
 f = open('data.csv', 'w+')
 f.write(data)
 f.close
@@ -99,7 +99,7 @@ f.close
 if len(output) > 10:
     report = {}
     report["value1"] = output
-    requests.post(ifttt, data=report)
+    print(requests.post(ifttt, data=report).text)
 else:
     print('no new items found')
     
