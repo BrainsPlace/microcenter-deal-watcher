@@ -1,4 +1,4 @@
-# micropy
+# microcenter-deal-watcher
 
 The goal of this project is to get an email via a ifttt webhook to see the most up to date deals at my local microcenter
 
